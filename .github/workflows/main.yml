@@ -30,4 +30,6 @@ jobs:
         id: changed-path
         with:
           paths: public
+        run: 
+          echo "push"
 
