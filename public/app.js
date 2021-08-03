@@ -23,6 +23,9 @@ function init() {
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
+  setTimeout(()=>{
+    console.log(firebase)
+  },0)
 }
 
 async function createRoom() {
@@ -124,7 +127,18 @@ async function joinRoomById(roomId) {
     });
 
     // Code for collecting ICE candidates below
+    const offer = roomSnapshot.data().offer;
+    await peerConnection.setRemoteDescription(offer);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
 
+    const roomWithAnswer = {
+      answer: {
+        type: answer.type,
+        sdp: answer.sdp
+      }
+    }
+    await roomRef.update(roomWithAnswer);
     // Code for collecting ICE candidates above
 
     peerConnection.addEventListener('track', event => {
